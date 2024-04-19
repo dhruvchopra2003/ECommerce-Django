@@ -1,0 +1,11 @@
+body {
+    padding: 10px;
+}
+
+.comment_input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}

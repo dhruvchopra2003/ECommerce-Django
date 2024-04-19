@@ -1,0 +1,61 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h2>My Watchlist and Bids</h2>
+<div class="row flex-wrap d-flex" id="my_watchlist">
+    {% for listing in my_watchlist %}
+
+    <div class="col-sm-3 mb-3">
+        <div class="card h-100 d-flex flex-column">
+            {% if listing.img_url %}
+            <img src="{{ listing.img_url }}" class="listingImg card-img-top mx-auto flex-grow-1"
+                style="width:auto; height:130px;">
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ listing.title }}</h3>
+                <p class="card-text ">{{ listing.description }}</p>
+                <p class="card-text"><strong>Owner:</strong> {{ listing.owner }}</p>
+                <h5 class="card-title"><strong>Category: </strong>{{ listing.category }}</h5>
+                <a href="{% url 'auctions:listingPage' listing.id %}" class="btn btn-primary mt-auto">Go to
+                    Listing</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <h3 class="m-auto">You haven't added anything to your watchlist</h3>
+    {% endfor %}
+</div>
+<hr>
+
+<h2>My Listings</h2>
+<div class="row flex-wrap d-flex">
+    {% for listing in my_bids %}
+
+    <div class="col-sm-3 mb-3">
+        <div class="card h-100 d-flex flex-column">
+            {% if listing.img_url %}
+            <img src="{{ listing.img_url }}" class="listingImg card-img-top mx-auto flex-grow-1"
+                style="width:auto; height:130px;">
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ listing.title }}</h3>
+                <p class="card-text ">{{ listing.description }}</p>
+                <p class="card-text"><strong>Owner:</strong> {{ listing.owner }}</p>
+                <h5 class="card-title"><strong>Category: </strong>{{ listing.category }}</h5>
+                {% if listing.active == False %}
+                    <div class="alert alert-danger text-center mt-3 mx-auto">Bid Closed!</div>
+                {% endif %}
+                <a href="{% url 'auctions:listingPage' listing.id %}" class="btn btn-primary mt-auto">Go to
+                    Listing</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <h3 class="m-auto">You don't have any active bids</h3>
+    {% endfor %}
+</div>
+<hr>
+
+
+{% endblock %}

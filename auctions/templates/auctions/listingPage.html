@@ -1,0 +1,84 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+<h1 class="text-center">{{listing.title}}</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{listing.img_url}}" class="img-fluid" alt="{{listing.title}}">
+            {% if message == 1 %}
+            <div class="alert alert-success mt-3" role="alert">Congratulations, You are the Top Bidder !!</div>
+            {% elif message == 0 %}
+            <div class="alert alert-danger mt-3" role="alert">Please match or bid a higher amount! </div>
+
+            {% elif message == 2 %}
+            <div class="alert alert-warning mt-3" role="alert">Added to your Watchlist! </div>
+            {% endif %}
+
+            <h5>Current Bid:</h5> ${{price}}
+            {% if bid.bidder == listing.owner %}
+            <h5>Bidder:</h5>No Bids yet, be the first one to bid!
+            {% else %}
+            <h5>Highest Bidder:</h5>{{bid.bidder}}
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <strong>Description</strong>
+            <p>{{listing.description}}</p>
+
+            <strong>Owner: </strong>
+            <p>{{listing.owner}}</p>
+            <strong>Category: </strong>
+            <p>{{listing.category}}</p>
+
+            {% if user == listing.owner %}
+            {% if listing.active == True %}
+            <form method="post" action="{% url 'auctions:closeListing' %}" class="mt-3">
+                {% csrf_token %}
+                <input class="btn btn-danger btn-block" type="submit" value="Close Listing">
+                <input type="hidden" name="listing_id" value="{{listing.id}}">
+                {% else %}
+                <div class="alert alert-success text-center">Sold To {{ bid.bidder }} !!!!</div>
+                {% endif %}
+                {% else %}
+                {% if listing.active == False %}
+                {% if bid.bidder == user%}
+                <div class="alert alert-success text-center">CONGRATULATIONS YOU'VE WON THE BID !!!!</div>
+                {% else %}
+                <div class="alert alert-success text-center">Sold To {{ bid.bidder }} !!!!</div>
+                {% endif %}
+                {% else %}
+                {% if user.is_authenticated %}
+                {% if flag == False %}
+                <form method="post" action="{% url 'auctions:watchlist' %}#my_watchlist" class="mt-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_id" value="add">
+                    <input type="hidden" name="ListingId" value="{{listing.id}}">
+                    <input class="btn btn-warning" type="submit" value="Add To Watchlist">
+                </form>
+                {% else %}
+                <form method="post" action="{% url 'auctions:watchlist' %}" class="mt-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_id" value="remove">
+                    <input type="hidden" name="ListingId" value="{{listing.id}}">
+                    <input class="btn btn-danger" type="submit" value="Remove From Watchlist">
+                </form>
+                {% endif %}
+                {% endif %}
+
+                <form method="post" action="{% url 'auctions:listingPage' listing.id %}" class="mt-3">
+                    <p class="text-center" style="font-weight: bold; font-size:21px;">Enter your Bid in $: </p>
+                    {% csrf_token %}
+
+                    <input name='bid_price' type="float" class="form-control mb-2" placeholder="{{price}}">
+                    <input class="btn btn-primary btn-block" type="submit" value="Bid">
+                    <input type="hidden" name="form_id" value="bid_form">
+                </form>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <center><a href="{% url 'auctions:comments' listing.id %}">Go To Comments</a></center>
+</div>
+
+{% endblock %}
